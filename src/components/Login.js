@@ -39,12 +39,12 @@ function Login() {
           </button>
         </div>
         <div className="mt-4 font-semibold text-sm text-slate-500 text-center md:text-left">
-          Don't have an account?{" "}
+          Don't have an account?/???{" "}
           <a
             className="text-red-600 hover:underline hover:underline-offset-4"
             href="/Register"
           >
-            Registersssss
+            Registerssss
           </a>
         </div>
       </div>
