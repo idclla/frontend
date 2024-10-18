@@ -31,11 +31,21 @@ function Login() {
           </label>
         </div>
         <div className="text-center md:text-left">
-          <button className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white uppercase rounded text-xs tracking-wider"type="submit">Login</button>
+          <button
+            className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white uppercase rounded text-xs tracking-wider"
+            type="submit"
+          >
+            Login
+          </button>
         </div>
         <div className="mt-4 font-semibold text-sm text-slate-500 text-center md:text-left">
-          Don't have an account?{" "}
-          <a className="text-red-600 hover:underline hover:underline-offset-4" href="/Registration">Register</a>
+          Don't have an account?/???{" "}
+          <a
+            className="text-red-600 hover:underline hover:underline-offset-4"
+            href="/Register"
+          >
+            Registerssss
+          </a>
         </div>
       </div>
     </section>
