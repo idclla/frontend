@@ -3,13 +3,24 @@ import LCCBImage from './img/LCCB.png';
 
 const LandingPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [days, setDays] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-  const [selectedDay, setSelectedDay] = useState(null);  // Track selected day
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [dateFiled, setDateFiled] = useState(''); // Date Filed
+  const [dateOfEvent, setDateOfEvent] = useState(''); // Date of Event
 
   // Get the current month and year
   const month = currentDate.toLocaleString('default', { month: 'long' });
   const year = currentDate.getFullYear();
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Function to get the number of days in a month
   const getDaysInMonth = (month, year) => {
@@ -50,7 +61,9 @@ const LandingPage = () => {
   const handleDayClick = (day) => {
     if (day) {
       setSelectedDay(day);
-      setIsModalOpen(true); // Open the modal
+      setDateFiled(`${year}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`); // Set Date Filed
+      setDateOfEvent(`${year}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`); // Set Date of Event
+      setIsModalOpen(true);
     }
   };
 
@@ -58,6 +71,8 @@ const LandingPage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedDay(null);
+    setDateFiled('');
+    setDateOfEvent('');
   };
 
   // Handler for form submission
@@ -66,6 +81,11 @@ const LandingPage = () => {
     // Process form data here
     console.log('Form submitted');
     handleCloseModal(); // Close the modal after submission
+  };
+
+  // Format the time
+  const formatTime = (time) => {
+    return time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
   return (
@@ -87,8 +107,13 @@ const LandingPage = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 bg-white">
+      <div className="flex-1 bg-white relative">
         <header className="text-3xl font-bold p-10">Calendar</header>
+
+        {/* Real-time Clock */}
+        <div className="absolute top-0 right-0 mt-4 mr-4 bg-gray-100 p-2 rounded-lg shadow-lg text-lg font-semibold">
+          {formatTime(currentTime)}
+        </div>
 
         {/* Custom Calendar */}
         <div className="mx-4 md:mx-10 bg-gray-100 p-6 rounded-lg shadow-lg flex flex-col h-auto">
@@ -141,50 +166,141 @@ const LandingPage = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-bold mb-4">Form for {month} {selectedDay}, {year}</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block font-medium">Event Name</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  required
-                />
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-5xl">
+            <h2 className="text-2xl font-bold mb-4">Booking Form for {month} {selectedDay}, {year}</h2>
+            <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+              
+              {/* Left Side */}
+              <div>
+                <div className="mb-4">
+                  <label className="block font-medium">Address to (Serving Dept/Office/Unit):</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Purpose of the Request:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Facility to Use:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Booking Specifications:</label>
+                  <textarea
+                    className="w-full border border-gray-300 p-2 rounded"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Requested by:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Approved by:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block font-medium">Location</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  required
-                />
+
+              {/* Right Side */}
+              <div>
+                <div className="mb-4">
+                  <label className="block font-medium">Date Filed:</label>
+                  <input
+                    type="date"
+                    value={dateFiled} // Set value from state
+                    onChange={(e) => setDateFiled(e.target.value)} // Update state on change
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Date of Event:</label>
+                  <input
+                    type="date"
+                    value={dateOfEvent} // Set value from state
+                    onChange={(e) => setDateOfEvent(e.target.value)} // Update state on change
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Start Time:</label>
+                  <input
+                    type="time"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">End Time:</label>
+                  <input
+                    type="time"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">No. of Participants:</label>
+                  <input
+                    type="number"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Noted by:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Date Accomplished:</label>
+                  <input
+                    type="date"
+                    className="w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Received and to be accomplished by:</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium">Approved by (VPGS and School President):</label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block font-medium">Time</label>
-                <input
-                  type="time"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-medium">Description</label>
-                <textarea
-                  className="w-full border border-gray-300 p-2 rounded"
-                  rows="3"
-                  required
-                ></textarea>
-              </div>
-              <div className="mb-4">
-                <label className="block font-medium">Reminder</label>
-                <select className="w-full border border-gray-300 p-2 rounded" required>
-                  <option value="none">None</option>
-                  <option value="email">Email Reminder</option>
-                  <option value="sms">SMS Reminder</option>
-                </select>
-              </div>
-              <div className="flex justify-end">
+
+              {/* Form buttons */}
+              <div className="col-span-2 flex justify-end">
                 <button
                   type="button"
                   onClick={handleCloseModal}
